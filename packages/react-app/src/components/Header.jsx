@@ -6,7 +6,7 @@ import Logo from "../img/Logo1.png";
 
 export default function Header() {
   return (
-    <header className="main-header" style={{width:"90vw"}}>
+    <header className="main-header" style={{width:"100vw"}}>
       <div className="main-header__wrapper">
         <div className="main-header__logo">
           <a href="/">

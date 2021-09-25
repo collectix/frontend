@@ -2,7 +2,7 @@ import { StaticJsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import { formatEther, parseEther } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { Alert, Button, Card, Col, Input, List, Menu, Row } from "antd";
+import { Alert, Button, Card, Col, Input, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import { useUserAddress } from "eth-hooks";
 import React, { useCallback, useEffect, useState } from "react";
@@ -18,8 +18,11 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import List from "@mui/material/List";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import FeaturedPlayListIcon from "@mui/icons-material/FeaturedPlayList";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
 import axios from "axios";
 import {
   Account,
@@ -43,7 +46,8 @@ import {
   CreateCollection,
   TaskFeed,
   CreateOffer,
-  Offers
+  Offers,
+  Main,
 } from "./components";
 import { DAI_ABI, DAI_ADDRESS, INFURA_ID, NETWORK, NETWORKS, RARIBLE_BASE_URL } from "./constants";
 import { Transactor } from "./helpers";
@@ -429,7 +433,9 @@ function App(props) {
   return (
     <div className="App" style={{ display: "flex" }}>
       <BrowserRouter>
-        {/* ✏️ Edit the header and change the title to your project name */}
+        <AppBar position="fixed" sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}>
+          <Header />
+        </AppBar>
         <Drawer
           sx={{
             width: drawerWidth,
@@ -442,9 +448,12 @@ function App(props) {
           variant="permanent"
           anchor="left"
         >
+          <Toolbar />
           <List>
             <ListItem button key="Profile">
               <Link
+                class="left-menu__link left-menu__link--active"
+                style={{ width: "100%" }}
                 onClick={() => {
                   if (isAuth) {
                     setRoute("/profile");
@@ -462,10 +471,12 @@ function App(props) {
             </ListItem>
             <ListItem button key="Collectors">
               <Link
+                class="left-menu__link left-menu__link--active"
+                style={{ width: "100%" }}
                 onClick={() => {
-                  setRoute("/");
+                  setRoute("/collectors");
                 }}
-                to="/"
+                to="/collectors"
               >
                 <ListItemIcon>
                   <FeaturedPlayListIcon />
@@ -475,6 +486,8 @@ function App(props) {
             </ListItem>
             <ListItem button key="Tasks feed">
               <Link
+                class="left-menu__link left-menu__link--active"
+                style={{ width: "100%" }}
                 onClick={() => {
                   setRoute("/tasks");
                 }}
@@ -488,6 +501,8 @@ function App(props) {
             </ListItem>
             <ListItem button key="Create Task">
               <Link
+                class="left-menu__link left-menu__link--active"
+                style={{ width: "100%" }}
                 onClick={() => {
                   setRoute("/create-task");
                 }}
@@ -501,6 +516,8 @@ function App(props) {
             </ListItem>
             <ListItem button key="+Colletion">
               <Link
+                class="left-menu__link left-menu__link--active"
+                style={{ width: "100%" }}
                 onClick={() => {
                   setRoute("/create-collection");
                 }}
@@ -514,6 +531,8 @@ function App(props) {
             </ListItem>
             <ListItem button key="Offers">
               <Link
+                class="left-menu__link left-menu__link--active"
+                style={{ width: "100%" }}
                 onClick={() => {
                   setRoute("/offers");
                 }}
@@ -527,6 +546,8 @@ function App(props) {
             </ListItem>
             <ListItem button key="Create Offer">
               <Link
+                class="left-menu__link left-menu__link--active"
+                style={{ width: "100%" }}
                 onClick={() => {
                   setRoute("/create-offer");
                 }}
@@ -538,24 +559,37 @@ function App(props) {
                 <ListItemText primary="Create Offer" />
               </Link>
             </ListItem>
+            <ListItem button key="Create Offer">
+              <Link
+                class="left-menu__link left-menu__link--active"
+                style={{ width: "100%" }}
+                onClick={() => {
+                  setRoute("/profile");
+                }}
+                to="/profile"
+              >
+                <ListItemIcon>
+                  <LocalOfferIcon />
+                </ListItemIcon>
+                <ListItemText primary="Profile Temporary" />
+              </Link>
+            </ListItem>
           </List>
         </Drawer>
         <div sx={{ bgcolor: "background.default", p: 3, justifyContent: "center" }}>
-          <Header />
+          <Toolbar />
           {networkDisplay}
           <Switch>
             <Route exact path="/">
-              {/*
-                🎛 this scaffolding is full of commonly used components
-                this <Contract/> component will automatically parse your ABI
-                and give you a form to interact with it locally
-            */}
+              <Main yourCollectibles={yourCollectibles} />
+            </Route>
+            <Route exact path="/collectors">
               <div style={{ width: "80vw", margin: "auto", marginTop: 32, paddingBottom: 32, textAlign: "center" }}>
                 <ListCollectibles yourCollectibles={yourCollectibles} />
               </div>
             </Route>
             <Route exact path="/create-profile">
-              <CreateProfile />
+              <CreateProfile address={address} />
             </Route>
             <Route exact path="/profile">
               <Profile />
@@ -570,10 +604,10 @@ function App(props) {
               <TaskFeed yourCollectibles={yourCollectibles} />
             </Route>
             <Route exact path="/create-offer">
-              <CreateOffer address={address}/>
+              <CreateOffer address={address} />
             </Route>
             <Route exact path="/offers">
-              <Offers/>
+              <Offers />
             </Route>
             <Route path="/mint">
               <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
@@ -828,7 +862,16 @@ function App(props) {
           <ThemeSwitch />
 
           {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
-          <div style={{ position: "fixed", textAlign: "right", right: 20, top: 0, padding: 10 }}>
+          <div
+            style={{
+              position: "fixed",
+              textAlign: "right",
+              right: 20,
+              top: 0,
+              padding: 10,
+              zIndex: 1202
+            }}
+          >
             <Account
               address={address}
               localProvider={localProvider}

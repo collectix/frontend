@@ -48,10 +48,17 @@ export default class CreateProfile extends React.Component {
 
   handleSubmit = event => {
     var bodyFormData = new FormData();
+    bodyFormData.append('address', this.props.address);
     bodyFormData.append('name', this.state.name);
     bodyFormData.append('email', this.state.mail);
     bodyFormData.append('custom_url', this.state.portfolio);
     bodyFormData.append('user_twitter', this.state.twitter);
+    bodyFormData.append('user_blog', 0);
+    bodyFormData.append('user_discord', 0);
+    bodyFormData.append('user_telegram', 0);
+    bodyFormData.append('user_reddit', 0);
+    bodyFormData.append('user_fb', 0);
+    bodyFormData.append('user_linkedin', 0);
     bodyFormData.append('user_description', this.state.message);
     bodyFormData.append('user_avatar', this.state.images[0]);
     console.log('SJFSJSFJD', this.state.images[0])
