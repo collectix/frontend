@@ -8,6 +8,7 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
 import ImageUploading from "react-images-uploading";
+import DragNDropImage from "../img/dndr.png";
 
 export default class CreateOffer extends React.Component {
   constructor(props) {
@@ -91,12 +92,26 @@ export default class CreateOffer extends React.Component {
         //handle error
         console.log(response);
       });
-    console.log(bodyFormData);
+
+    axios({
+      method: "post",
+      url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
+      file: this.state.images[0].data_url,
+      headers: {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJmYmJlZjM5MS1h" +
+          "ODJhLTRlMzUtYWI2My1lZWUwY2I0MGFiYTAiLCJlbWFpbCI6Imdsb3JpYTIwMDk2NUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1Z" +
+          "SwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxf" +
+          "SwibWZhX2VuYWJsZWQiOmZhbHNlfSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiYjEwZmY4M2I0Y" +
+          "WFhMmYwMWFkOWIiLCJzY29wZWRLZXlTZWNyZXQiOiI2OTk2ZWY4ZGMwNTM3ODFiM2NmMjZjNzZiZGNiNmM5MGY1NTU5YjEzOTUzZTMxZDIzOW" +
+          "VmNTRkM2ZkMzI2NGQzIiwiaWF0IjoxNjMyNjExMjMxfQ.MFeF4KqNAZcQVyeENpQJePU-5dV4d7C1Uz5wG0OONWg"}
+    })
+
     event.preventDefault();
   };
 
   onChange = (imageList, addUpdateIndex) => {
     // data for submit
+    let drager = document.getElementById("1");
+    drager.style.display = "none";
     console.log(imageList, addUpdateIndex);
     this.setState({ images: imageList });
   };
@@ -121,6 +136,8 @@ export default class CreateOffer extends React.Component {
                 style={{ display: "block", marginTop: "15px" }}
                 label="Name"
                 type="text"
+                variant="standard"
+                fullWidth
                 value={this.state.name}
                 onChange={this.handleChangeName}
               />
@@ -130,6 +147,8 @@ export default class CreateOffer extends React.Component {
                 style={{ display: "block", marginTop: "15px" }}
                 label="Description"
                 type="text"
+                variant="standard"
+                fullWidth
                 value={this.state.description}
                 onChange={this.handleChangeDescription}
               />
@@ -139,11 +158,18 @@ export default class CreateOffer extends React.Component {
                 style={{ display: "block", marginTop: "15px" }}
                 label="Royalty"
                 type="text"
+                variant="standard"
+                fullWidth
                 value={this.state.royalty}
                 onChange={this.handleChangeRoyalty}
               />
             </label>
-            <input style={{ display: "block", marginTop: "15px" }} type="submit" value="Отправить" />
+            <input
+              className="main-button collection__item-buy"
+              style={{ display: "block", marginTop: "15px" }}
+              type="submit"
+              value="Отправить"
+            />
           </form>
         </Grid>
         <Grid item xs={6} style={{ marginTop: 100 }}>
@@ -165,17 +191,25 @@ export default class CreateOffer extends React.Component {
               }) => (
                 // write your building UI
                 <div className="upload__image-wrapper">
-                  <button style={isDragging ? { color: "red" } : undefined} onClick={onImageUpload} {...dragProps}>
-                    Click or Drop here
-                  </button>
+                  <img id="1" src={DragNDropImage} onClick={onImageUpload} {...dragProps} />
                   &nbsp;
-                  <button onClick={onImageRemoveAll}>Remove all images</button>
                   {imageList.map((image, index) => (
                     <div key={index} className="image-item">
-                      <img src={image.data_url} alt="" width="100" />
+                      <img src={image.data_url} alt="" width="200" />
                       <div className="image-item__btn-wrapper">
-                        <button onClick={() => onImageUpdate(index)}>Update</button>
-                        <button onClick={() => onImageRemove(index)}>Remove</button>
+                        <button className="main-button collection__item-buy" onClick={() => onImageUpdate(index)}>
+                          Update
+                        </button>
+                        <button
+                          className="main-button collection__item-buy"
+                          onClick={() => {
+                            onImageRemove(index);
+                            let drager = document.getElementById("1");
+                            drager.style.display = "inline";
+                          }}
+                        >
+                          Remove
+                        </button>
                       </div>
                     </div>
                   ))}

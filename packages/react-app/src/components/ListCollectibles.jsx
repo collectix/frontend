@@ -42,13 +42,14 @@ export default function ListCollectibles(props) {
 
   return (
     <List
-      grid={{ gutter: 16, column: 3 }}
+      grid={{ gutter: 16, xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 3}}
       dataSource={collectibles}
       className="collectors__list clear-list"
+      style={{ margin: "auto", textAlign: "center", alignItems: "center" }}
       renderItem={item => {
         const id = item.id.toNumber();
         return (
-          <List.Item key={id + "_" + item.uri + "_" + item.owner} style={{ width: 500 }}>
+          <List.Item key={id + "_" + item.uri + "_" + item.owner}>
             {/*
             <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={3}>
               <Grid item>

@@ -281,7 +281,7 @@ export default class Main extends React.Component {
                 key={id + "_" + item.uri + "_" + item.owner}
                 style={{ width: "80vw", textAlign: "center", margin: "auto", justifyContent: "center" }}
               >
-                <li className="collectors__item" style={{ textAlign: "center" }}>
+                <li style={{ textAlign: "center" }}>
                   <div className="tasks__item--wrapper">
                     <div className="collectors__item-header">
                       <div className="collectors__name-block">

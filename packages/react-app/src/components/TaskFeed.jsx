@@ -85,70 +85,75 @@ export default class TaskFeed extends React.Component {
 
   render() {
     return (
-      <List
-        dataSource={this.state.tasks}
-        style={{ justifyContent: "center", width: "80vw" }}
-        renderItem={item => {
-          const id = item.id;
-          return (
-            <List.Item
-              key={id + "_" + item.uri + "_" + item.owner}
-              style={{ width: "80vw", textAlign: "center", margin: "auto", justifyContent: "center" }}
-            >
-              <li className="collectors__item" style={{ textAlign: "center" }}>
-                <div className="tasks__item--wrapper">
-                  <div className="collectors__item-header">
-                    <div className="collectors__name-block">
-                      <a className="collectors__name">{item.title}</a>
+      <div className="profile-offers">
+        <h2 className="main-title">
+          Tasks
+        </h2>
+        <List
+          dataSource={this.state.tasks}
+          style={{ justifyContent: "center", width: "80vw" }}
+          renderItem={item => {
+            const id = item.id;
+            return (
+              <List.Item
+                key={id + "_" + item.uri + "_" + item.owner}
+                style={{ width: "80vw", textAlign: "center", margin: "auto", justifyContent: "center" }}
+              >
+                <li style={{ textAlign: "center" }}>
+                  <div className="tasks__item--wrapper">
+                    <div className="collectors__item-header">
+                      <div className="collectors__name-block">
+                        <a className="collectors__name">{item.title}</a>
+                      </div>
                     </div>
+                    <ul className="collectors__params clear-list">
+                      <li className="collectors__params-item">
+                        <span className="collectors__name-param">Categories </span>
+                        <span className="collectors__value-param">{item.categories}</span>
+                      </li>
+                      <li className="collectors__params-item">
+                        <span className="collectors__name-param">Hashtags </span>
+                        <span className="collectors__value-param">{item.hashtags}</span>
+                      </li>
+                    </ul>
+                    <p className="collectors__text">
+                      {item.body}
+                    </p>
+                    <h3 className="collectors__text">
+                      {item.author}
+                    </h3>
+                    <ul className="collectors__params clear-list">
+                      <li className="collectors__params-item">
+                        <span className="collectors__name-param">Collection </span>
+                        <span className="collectors__value-param">{item.collection}</span>
+                      </li>
+                      <li className="collectors__params-item">
+                        <span className="collectors__name-param">Published </span>
+                        <span className="collectors__value-param">{item.published}</span>
+                      </li>
+                      <li className="collectors__params-item">
+                        <span className="collectors__name-param">Deadline </span>
+                        <span className="collectors__value-param">{item.deadline}</span>
+                      </li>
+                    </ul>
+                    <ul className="collectors__params clear-list">
+                      <li className="collectors__params-item">
+                        <span className="collectors__name-param">Proposed </span>
+                        <span className="collectors__value-param">{item.proposed}</span>
+                      </li>
+                      <li className="collectors__params-item">
+                        <span className="collectors__name-param">Reward </span>
+                        <span className="collectors__value-param">{item.reward}</span>
+                      </li>
+                    </ul>
+                    <button className="collectors__button main-button">Tasks: 5</button>
                   </div>
-                  <ul className="collectors__params clear-list">
-                    <li className="collectors__params-item">
-                      <span className="collectors__name-param">Categories </span>
-                      <span className="collectors__value-param">{item.categories}</span>
-                    </li>
-                    <li className="collectors__params-item">
-                      <span className="collectors__name-param">Hashtags </span>
-                      <span className="collectors__value-param">{item.hashtags}</span>
-                    </li>
-                  </ul>
-                  <p className="collectors__text">
-                    {item.body}
-                  </p>
-                  <h3 className="collectors__text">
-                    {item.author}
-                  </h3>
-                  <ul className="collectors__params clear-list">
-                    <li className="collectors__params-item">
-                      <span className="collectors__name-param">Collection </span>
-                      <span className="collectors__value-param">{item.collection}</span>
-                    </li>
-                    <li className="collectors__params-item">
-                      <span className="collectors__name-param">Published </span>
-                      <span className="collectors__value-param">{item.published}</span>
-                    </li>
-                    <li className="collectors__params-item">
-                      <span className="collectors__name-param">Deadline </span>
-                      <span className="collectors__value-param">{item.deadline}</span>
-                    </li>
-                  </ul>
-                  <ul className="collectors__params clear-list">
-                    <li className="collectors__params-item">
-                      <span className="collectors__name-param">Proposed </span>
-                      <span className="collectors__value-param">{item.proposed}</span>
-                    </li>
-                    <li className="collectors__params-item">
-                      <span className="collectors__name-param">Reward </span>
-                      <span className="collectors__value-param">{item.reward}</span>
-                    </li>
-                  </ul>
-                  <button className="collectors__button main-button">Tasks: 5</button>
-                </div>
-              </li>
-            </List.Item>
-          );
-        }}
-      />
+                </li>
+              </List.Item>
+            );
+          }}
+        />
+      </div>
     );
   }
 }
