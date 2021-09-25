@@ -10,6 +10,7 @@ import ReactJson from "react-json-view";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
+import "./style.css";
 import Drawer from "@mui/material/Drawer";
 import Typography from "@mui/material/Typography";
 import { ListItem, ListItemIcon, ListItemText, Grid } from "@mui/material";
@@ -41,6 +42,8 @@ import {
   CreateTask,
   CreateCollection,
   TaskFeed,
+  CreateOffer,
+  Offers
 } from "./components";
 import { DAI_ABI, DAI_ADDRESS, INFURA_ID, NETWORK, NETWORKS, RARIBLE_BASE_URL } from "./constants";
 import { Transactor } from "./helpers";
@@ -344,7 +347,7 @@ function App(props) {
     }
   } else {
     networkDisplay = (
-      <div style={{ zIndex: -1, position: "absolute", right: 154, top: 28, padding: 16, color: targetNetwork.color }}>
+      <div style={{ zIndex: 2, position: "absolute", right: 154, top: 28, padding: 16, color: targetNetwork.color }}>
         {targetNetwork.name}
       </div>
     );
@@ -522,6 +525,19 @@ function App(props) {
                 <ListItemText primary="Offers" />
               </Link>
             </ListItem>
+            <ListItem button key="Create Offer">
+              <Link
+                onClick={() => {
+                  setRoute("/create-offer");
+                }}
+                to="/create-offer"
+              >
+                <ListItemIcon>
+                  <LocalOfferIcon />
+                </ListItemIcon>
+                <ListItemText primary="Create Offer" />
+              </Link>
+            </ListItem>
           </List>
         </Drawer>
         <div sx={{ bgcolor: "background.default", p: 3, justifyContent: "center" }}>
@@ -552,6 +568,12 @@ function App(props) {
             </Route>
             <Route exact path="/tasks">
               <TaskFeed yourCollectibles={yourCollectibles} />
+            </Route>
+            <Route exact path="/create-offer">
+              <CreateOffer address={address}/>
+            </Route>
+            <Route exact path="/offers">
+              <Offers/>
             </Route>
             <Route path="/mint">
               <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
@@ -806,7 +828,7 @@ function App(props) {
           <ThemeSwitch />
 
           {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
-          <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
+          <div style={{ position: "fixed", textAlign: "right", right: 20, top: 0, padding: 10 }}>
             <Account
               address={address}
               localProvider={localProvider}

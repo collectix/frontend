@@ -27,3 +27,5 @@ export { default as Profile } from "./Profile";
 export { default as CreateTask } from "./CreateTask";
 export { default as CreateCollection } from "./CreateCollection.jsx";
 export { default as TaskFeed } from "./TaskFeed.jsx";
+export { default as CreateOffer } from "./CreateOffer.jsx";
+export { default as Offers } from "./Offers.jsx";
