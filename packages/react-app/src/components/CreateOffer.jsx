@@ -9,6 +9,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
 import ImageUploading from "react-images-uploading";
 import DragNDropImage from "../img/dndr.png";
+import { createLazyMint, generateTokenId, putLazyMint } from "../rarible/createLazyMint";
 
 export default class CreateOffer extends React.Component {
   constructor(props) {
@@ -93,17 +94,53 @@ export default class CreateOffer extends React.Component {
         console.log(response);
       });
 
+    var bodyFormData1 = new FormData();
+    bodyFormData1.append("file", this.state.images[0].file);
+
     axios({
       method: "post",
       url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
-      file: this.state.images[0].data_url,
-      headers: {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJmYmJlZjM5MS1h" +
+      data: bodyFormData1,
+      headers: {
+        Authorization:
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJmYmJlZjM5MS1h" +
           "ODJhLTRlMzUtYWI2My1lZWUwY2I0MGFiYTAiLCJlbWFpbCI6Imdsb3JpYTIwMDk2NUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1Z" +
           "SwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxf" +
           "SwibWZhX2VuYWJsZWQiOmZhbHNlfSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiYjEwZmY4M2I0Y" +
           "WFhMmYwMWFkOWIiLCJzY29wZWRLZXlTZWNyZXQiOiI2OTk2ZWY4ZGMwNTM3ODFiM2NmMjZjNzZiZGNiNmM5MGY1NTU5YjEzOTUzZTMxZDIzOW" +
-          "VmNTRkM2ZkMzI2NGQzIiwiaWF0IjoxNjMyNjExMjMxfQ.MFeF4KqNAZcQVyeENpQJePU-5dV4d7C1Uz5wG0OONWg"}
+          "VmNTRkM2ZkMzI2NGQzIiwiaWF0IjoxNjMyNjExMjMxfQ.MFeF4KqNAZcQVyeENpQJePU-5dV4d7C1Uz5wG0OONWg",
+      },
     })
+      .then((response) => {
+        //handle success
+        console.log("IPFS", response.data.IpfsHash);
+        let metadata = {
+          name: this.state.name,
+          description: this.state.description,
+          image: "ipfs://ipfs/" + response.data.IpfsHash,
+          external_url: "",
+          animation_url: "",
+        };
+        const newTokenId = generateTokenId(
+          this.props.writeContracts.ERC721Rarible.address,
+          this.props.accountAddress,
+        ).then(newTokenId => {
+          const form = createLazyMint(
+            newTokenId,
+            this.props.provider,
+            this.props.writeContracts.ERC721Rarible.address,
+            this.props.accountAddress,
+            response.data.IpfsHash,
+            "ERC721",
+          ).then(form => {
+            putLazyMint(form);
+          });
+        });
+      })
+      .catch(function (response) {
+        //handle error
+        console.log(response);
+      });
 
     event.preventDefault();
   };

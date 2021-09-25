@@ -604,7 +604,8 @@ function App(props) {
               <TaskFeed yourCollectibles={yourCollectibles} />
             </Route>
             <Route exact path="/create-offer">
-              <CreateOffer address={address} />
+              <CreateOffer accountAddress={address} writeContracts={writeContracts} ensProvider={mainnetProvider}
+                           provider={userProvider}/>
             </Route>
             <Route exact path="/offers">
               <Offers />
