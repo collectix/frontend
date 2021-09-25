@@ -10,6 +10,16 @@ import ReactJson from "react-json-view";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
+import Drawer from "@mui/material/Drawer";
+import Typography from "@mui/material/Typography";
+import { ListItem, ListItemIcon, ListItemText, Grid } from "@mui/material";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import FeaturedPlayListIcon from "@mui/icons-material/FeaturedPlayList";
+import axios from "axios";
 import {
   Account,
   Address,
@@ -20,12 +30,19 @@ import {
   Header,
   Ramp,
   ThemeSwitch,
+  ImageUpload,
   Sell,
   Mint,
   LazyMint,
   RaribleItemIndexer,
+  ListCollectibles,
+  CreateProfile,
+  Profile,
+  CreateTask,
+  CreateCollection,
+  TaskFeed,
 } from "./components";
-import { DAI_ABI, DAI_ADDRESS, INFURA_ID, NETWORK, NETWORKS } from "./constants";
+import { DAI_ABI, DAI_ADDRESS, INFURA_ID, NETWORK, NETWORKS, RARIBLE_BASE_URL } from "./constants";
 import { Transactor } from "./helpers";
 import {
   useBalance,
@@ -39,7 +56,6 @@ import {
   useUserProvider,
 } from "./hooks";
 import { matchSellOrder, prepareMatchingOrder } from "./rarible/createOrders";
-import { RARIBLE_BASE_URL } from "./constants";
 
 const { BufferList } = require("bl");
 // https://www.npmjs.com/package/ipfs-http-client
@@ -212,6 +228,7 @@ function App(props) {
   //
   const yourBalance = balance && balance.toNumber && balance.toNumber();
   const [yourCollectibles, setYourCollectibles] = useState();
+  console.log("YOUR COLL", yourCollectibles);
 
   useEffect(() => {
     const updateYourCollectibles = async () => {
@@ -385,6 +402,7 @@ function App(props) {
   const [ipfsDownHash, setIpfsDownHash] = useState();
   const [collectionContract, setCollectionContract] = useState();
   const [tokenId, setTokenId] = useState();
+  const [isAuth, setAuth] = useState();
 
   const [downloading, setDownloading] = useState();
   const [ipfsContent, setIpfsContent] = useState();
@@ -393,502 +411,417 @@ function App(props) {
 
   const [transferToAddresses, setTransferToAddresses] = useState({});
   const [approveAddresses, setApproveAddresses] = useState({});
+  const drawerWidth = 240;
+
+  const auth = axios
+    .get("http://collectix.store:3334/api/auth/" + address)
+    .then(function (response) {
+      setAuth(true);
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    });
 
   return (
-    <div className="App">
-      {/* ✏️ Edit the header and change the title to your project name */}
-      <Header />
-      {networkDisplay}
+    <div className="App" style={{ display: "flex" }}>
       <BrowserRouter>
-        <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
-          <Menu.Item key="/">
-            <Link
-              onClick={() => {
-                setRoute("/");
-              }}
-              to="/"
-            >
-              YourCollectibles
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/mint">
-            <Link
-              onClick={() => {
-                setRoute("/mint");
-              }}
-              to="/mint"
-            >
-              Mint
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/lazyMint">
-            <Link
-              onClick={() => {
-                setRoute("/lazyMint");
-              }}
-              to="/lazyMint"
-            >
-              Lazy Mint
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/raribleItemIndexer">
-            <Link
-              onClick={() => {
-                setRoute("/raribleItemIndexer");
-              }}
-              to="/raribleItemIndexer"
-            >
-              Rarible Item Indexer
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/rarible">
-            <Link
-              onClick={() => {
-                setRoute("/rarible");
-              }}
-              to="/rarible"
-            >
-              Rarible Order Indexer
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/transfers">
-            <Link
-              onClick={() => {
-                setRoute("/transfers");
-              }}
-              to="/transfers"
-            >
-              Transfers
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/ipfsup">
-            <Link
-              onClick={() => {
-                setRoute("/ipfsup");
-              }}
-              to="/ipfsup"
-            >
-              IPFS Upload
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/ipfsdown">
-            <Link
-              onClick={() => {
-                setRoute("/ipfsdown");
-              }}
-              to="/ipfsdown"
-            >
-              IPFS Download
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/debugcontracts">
-            <Link
-              onClick={() => {
-                setRoute("/debugcontracts");
-              }}
-              to="/debugcontracts"
-            >
-              Debug Contracts
-            </Link>
-          </Menu.Item>
-        </Menu>
-
-        <Switch>
-          <Route exact path="/">
-            {/*
+        {/* ✏️ Edit the header and change the title to your project name */}
+        <Drawer
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            "& .MuiDrawer-paper": {
+              width: drawerWidth,
+              boxSizing: "border-box",
+            },
+          }}
+          variant="permanent"
+          anchor="left"
+        >
+          <List>
+            <ListItem button key="Profile">
+              <Link
+                onClick={() => {
+                  if (isAuth) {
+                    setRoute("/profile");
+                  } else {
+                    setRoute("/create-profile");
+                  }
+                }}
+                to={isAuth ? "/profile" : "/create-profile"}
+              >
+                <ListItemIcon>
+                  <ManageAccountsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Profile" />
+              </Link>
+            </ListItem>
+            <ListItem button key="Collectors">
+              <Link
+                onClick={() => {
+                  setRoute("/");
+                }}
+                to="/"
+              >
+                <ListItemIcon>
+                  <FeaturedPlayListIcon />
+                </ListItemIcon>
+                <ListItemText primary="Collectors" />
+              </Link>
+            </ListItem>
+            <ListItem button key="Tasks feed">
+              <Link
+                onClick={() => {
+                  setRoute("/tasks");
+                }}
+                to="/tasks"
+              >
+                <ListItemIcon>
+                  <FormatListBulletedIcon />
+                </ListItemIcon>
+                <ListItemText primary="Tasks feed" />
+              </Link>
+            </ListItem>
+            <ListItem button key="Create Task">
+              <Link
+                onClick={() => {
+                  setRoute("/create-task");
+                }}
+                to="/create-task"
+              >
+                <ListItemIcon>
+                  <NoteAddIcon />
+                </ListItemIcon>
+                <ListItemText primary="Create Task" />
+              </Link>
+            </ListItem>
+            <ListItem button key="+Colletion">
+              <Link
+                onClick={() => {
+                  setRoute("/create-collection");
+                }}
+                to="/create-collection"
+              >
+                <ListItemIcon>
+                  <CreateNewFolderIcon />
+                </ListItemIcon>
+                <ListItemText primary="+Colletion" />
+              </Link>
+            </ListItem>
+            <ListItem button key="Offers">
+              <Link
+                onClick={() => {
+                  setRoute("/offers");
+                }}
+                to="/offers"
+              >
+                <ListItemIcon>
+                  <LocalOfferIcon />
+                </ListItemIcon>
+                <ListItemText primary="Offers" />
+              </Link>
+            </ListItem>
+          </List>
+        </Drawer>
+        <div sx={{ bgcolor: "background.default", p: 3, justifyContent: "center" }}>
+          <Header />
+          {networkDisplay}
+          <Switch>
+            <Route exact path="/">
+              {/*
                 🎛 this scaffolding is full of commonly used components
                 this <Contract/> component will automatically parse your ABI
                 and give you a form to interact with it locally
             */}
+              <div style={{ width: "80vw", margin: "auto", marginTop: 32, paddingBottom: 32, textAlign: "center" }}>
+                <ListCollectibles yourCollectibles={yourCollectibles} />
+              </div>
+            </Route>
+            <Route exact path="/create-profile">
+              <CreateProfile />
+            </Route>
+            <Route exact path="/profile">
+              <Profile />
+            </Route>
+            <Route exact path="/create-task">
+              <CreateTask />
+            </Route>
+            <Route exact path="/create-collection">
+              <CreateCollection />
+            </Route>
+            <Route exact path="/tasks">
+              <TaskFeed yourCollectibles={yourCollectibles} />
+            </Route>
+            <Route path="/mint">
+              <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
+                <Mint ensProvider={mainnetProvider} provider={userProvider} writeContracts={writeContracts} />
+              </div>
+            </Route>
+            <Route path="/lazyMint">
+              <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
+                <LazyMint
+                  ensProvider={mainnetProvider}
+                  provider={userProvider}
+                  // contractAddress={writeContracts.ERC721Rarible.address}
+                  // contractAddress={writeContracts.YourCollectible.address}
+                  writeContracts={writeContracts}
+                  accountAddress={address}
+                />
+              </div>
+            </Route>
 
-            <div style={{ width: 640, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-              <List
-                bordered
-                dataSource={yourCollectibles}
-                renderItem={item => {
-                  const id = item.id.toNumber();
-                  return (
-                    <List.Item key={id + "_" + item.uri + "_" + item.owner}>
-                      <Card
-                        title={
+            <Route path="/raribleItemIndexer">
+              <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
+                <RaribleItemIndexer
+                  ensProvider={mainnetProvider}
+                  tx={tx}
+                  provider={userProvider}
+                  writeContracts={writeContracts}
+                  accountAddress={address}
+                />
+              </div>
+            </Route>
+
+            <Route path="/rarible">
+              <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
+                <AddressInput
+                  ensProvider={mainnetProvider}
+                  placeholder="NFT collection address"
+                  value={collectionContract}
+                  onChange={newValue => {
+                    setCollectionContract(newValue);
+                  }}
+                />
+                <Input
+                  value={tokenId}
+                  placeholder="tokenId"
+                  onChange={e => {
+                    setTokenId(e.target.value);
+                  }}
+                />
+              </div>
+              <Button
+                style={{ margin: 8 }}
+                loading={sending}
+                size="large"
+                shape="round"
+                type="primary"
+                onClick={async () => {
+                  setDownloading(true);
+                  let sellOrderResult;
+                  if (tokenId) {
+                    const getSellOrdersByItemUrl = `${RARIBLE_BASE_URL}order/orders/sell/byItem?contract=${collectionContract}&tokenId=${tokenId}&sort=LAST_UPDATE`;
+                    sellOrderResult = await fetch(getSellOrdersByItemUrl);
+                  } else {
+                    const getSellOrderByCollectionUrl = `${RARIBLE_BASE_URL}order/orders/sell/byCollection?collection=${collectionContract}&sort=LAST_UPDATE`;
+                    sellOrderResult = await fetch(getSellOrderByCollectionUrl);
+                  }
+                  const resultJson = await sellOrderResult.json();
+                  if (resultJson && resultJson.orders) {
+                    setSellOrderContent(resultJson.orders);
+                  }
+                  setDownloading(false);
+                }}
+              >
+                Get Sell Orders
+              </Button>
+
+              <pre style={{ padding: 16, width: 500, margin: "auto", paddingBottom: 150 }}>
+                {JSON.stringify(sellOrderContent)}
+              </pre>
+              <div style={{ width: 640, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+                <List
+                  bordered
+                  dataSource={sellOrderContent}
+                  renderItem={item => {
+                    const id = item.hash;
+                    return (
+                      <List.Item key={id}>
+                        <Card
+                          title={
+                            <div>
+                              <span style={{ fontSize: 16, marginRight: 8 }}>{item.type}</span>
+                            </div>
+                          }
+                        >
                           <div>
-                            <span style={{ fontSize: 16, marginRight: 8 }}>#{id}</span> {item.name}
+                            <p>maker: {item.maker}</p>
+                            <p>selling:</p>
+                            <p>collection: {item.make.assetType.contract}</p>
+                            <p>tokenId: {item.make.assetType.tokenId}</p>
+                            <p>
+                              price: {formatEther(item.take.value)}
+                              {item.take.assetType.assetClass}
+                            </p>
+                            <p>createAt: {item.createdAt}</p>
                           </div>
-                        }
-                      >
-                        <div>
-                          <img src={item.image} style={{ maxWidth: 150 }} />
-                        </div>
-                        <div>{item.description}</div>
-                      </Card>
+                        </Card>
 
-                      <div>
-                        owner:{" "}
-                        <Address
-                          address={item.owner}
-                          ensProvider={mainnetProvider}
-                          blockExplorer={blockExplorer}
-                          fontSize={16}
-                        />
-                        <AddressInput
-                          ensProvider={mainnetProvider}
-                          placeholder="transfer to address"
-                          value={transferToAddresses[id]}
-                          onChange={newValue => {
-                            const update = {};
-                            update[id] = newValue;
-                            setTransferToAddresses({ ...transferToAddresses, ...update });
-                          }}
-                        />
                         <Button
-                          onClick={() => {
-                            console.log("writeContracts", writeContracts);
-                            tx(writeContracts.YourCollectible.transferFrom(address, transferToAddresses[id], id));
+                          onClick={async () => {
+                            const preparedTransaction = await prepareMatchingOrder(item, address);
+                            console.log({ preparedTransaction });
+                            const value = preparedTransaction.asset.value;
+                            const valueBN = BigNumber.from(value);
+                            const safeValue = valueBN.add(100);
+                            console.log({ safeValue });
+                            const signer = userProvider.getSigner();
+                            tx(
+                              signer.sendTransaction({
+                                to: preparedTransaction.transaction.to,
+                                from: address,
+                                data: preparedTransaction.transaction.data,
+                                value: safeValue,
+                              }),
+                            );
                           }}
                         >
-                          Transfer
+                          Fill order
                         </Button>
-                        <AddressInput
-                          ensProvider={mainnetProvider}
-                          placeholder="approve address"
-                          value={approveAddresses[id]}
-                          onChange={newValue => {
-                            const update = {};
-                            update[id] = newValue;
-                            setApproveAddresses({ ...approveAddresses, ...update });
-                          }}
-                        />
-                        <Button
-                          onClick={() => {
-                            console.log("writeContracts", writeContracts);
-                            tx(writeContracts.YourCollectible.approve(approveAddresses[id], id));
-                          }}
-                        >
-                          Approve
-                        </Button>
-                        <Sell
-                          provider={userProvider}
-                          accountAddress={address}
-                          ERC721Address={writeContracts.YourCollectible.address}
-                          tokenId={id}
-                        ></Sell>
-                      </div>
-                    </List.Item>
-                  );
+                      </List.Item>
+                    );
+                  }}
+                />
+              </div>
+            </Route>
+
+            <Route path="/transfers">
+              <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+                <List
+                  bordered
+                  dataSource={transferEvents}
+                  renderItem={item => {
+                    return (
+                      <List.Item key={item[0] + "_" + item[1] + "_" + item.blockNumber + "_" + item[2].toNumber()}>
+                        <span style={{ fontSize: 16, marginRight: 8 }}>#{item[2].toNumber()}</span>
+                        <Address address={item[0]} ensProvider={mainnetProvider} fontSize={16} /> =&gt;
+                        <Address address={item[1]} ensProvider={mainnetProvider} fontSize={16} />
+                      </List.Item>
+                    );
+                  }}
+                />
+              </div>
+            </Route>
+
+            <Route path="/ipfsup">
+              <div style={{ paddingTop: 32, width: 740, margin: "auto", textAlign: "left" }}>
+                <ReactJson
+                  style={{ padding: 8 }}
+                  src={yourJSON}
+                  theme="pop"
+                  enableClipboard={false}
+                  onEdit={(edit, a) => {
+                    setYourJSON(edit.updated_src);
+                  }}
+                  onAdd={(add, a) => {
+                    setYourJSON(add.updated_src);
+                  }}
+                  onDelete={(del, a) => {
+                    setYourJSON(del.updated_src);
+                  }}
+                />
+              </div>
+
+              <Button
+                style={{ margin: 8 }}
+                loading={sending}
+                size="large"
+                shape="round"
+                type="primary"
+                onClick={async () => {
+                  console.log("UPLOADING...", yourJSON);
+                  setSending(true);
+                  setIpfsHash();
+                  const result = await ipfs.add(JSON.stringify(yourJSON)); // addToIPFS(JSON.stringify(yourJSON))
+                  if (result && result.path) {
+                    setIpfsHash(result.path);
+                  }
+                  setSending(false);
+                  console.log("RESULT:", result);
                 }}
+              >
+                Upload to IPFS
+              </Button>
+
+              <div style={{ padding: 16, paddingBottom: 150 }}>{ipfsHash}</div>
+            </Route>
+            <Route path="/ipfsdown">
+              <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
+                <Input
+                  value={ipfsDownHash}
+                  placeholder="IPFS hash (like QmadqNw8zkdrrwdtPFK1pLi8PPxmkQ4pDJXY8ozHtz6tZq)"
+                  onChange={e => {
+                    setIpfsDownHash(e.target.value);
+                  }}
+                />
+              </div>
+              <Button
+                style={{ margin: 8 }}
+                loading={downloading}
+                size="large"
+                shape="round"
+                type="primary"
+                onClick={async () => {
+                  console.log("DOWNLOADING...", ipfsDownHash);
+                  setDownloading(true);
+                  setIpfsContent();
+                  const result = await getFromIPFS(ipfsDownHash); // addToIPFS(JSON.stringify(yourJSON))
+                  if (result && result.toString) {
+                    setIpfsContent(result.toString());
+                  }
+                  setDownloading(false);
+                }}
+              >
+                Download from IPFS
+              </Button>
+
+              <pre style={{ padding: 16, width: 500, margin: "auto", paddingBottom: 150 }}>{ipfsContent}</pre>
+            </Route>
+            <Route path="/debugcontracts">
+              <Contract
+                name="YourCollectible"
+                signer={userProvider.getSigner()}
+                provider={localProvider}
+                address={address}
+                blockExplorer={blockExplorer}
               />
-            </div>
-          </Route>
-          <Route path="/mint">
-            <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
-                        <Mint
-                      ensProvider={mainnetProvider}
-                          provider={userProvider}
-                          writeContracts={writeContracts}
-                        ></Mint>
-            </div>
-
-          </Route>
-          <Route path="/lazyMint">
-            <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
-                        <LazyMint
-                          ensProvider={mainnetProvider}
-                          provider={userProvider}
-                          // contractAddress={writeContracts.ERC721Rarible.address}
-                          // contractAddress={writeContracts.YourCollectible.address}
-                          writeContracts={writeContracts}
-                          accountAddress={address}
-                        ></LazyMint>
-            </div>
-
-          </Route>
-
-          <Route path="/raribleItemIndexer">
-            <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
-                        <RaribleItemIndexer
-                          ensProvider={mainnetProvider}
-                          tx={tx}
-                          provider={userProvider}
-                          writeContracts={writeContracts}
-                          accountAddress={address}
-                        ></RaribleItemIndexer>
-            </div>
-
-          </Route>
-
-          <Route path="/rarible">
-            <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
-              <AddressInput
-                ensProvider={mainnetProvider}
-                placeholder="NFT collection address"
-                value={collectionContract}
-                onChange={newValue => {
-                  setCollectionContract(newValue);
-                }}
+              <Contract
+                name="YourERC20"
+                signer={userProvider.getSigner()}
+                provider={localProvider}
+                address={address}
+                blockExplorer={blockExplorer}
               />
-              <Input
-                value={tokenId}
-                placeholder="tokenId"
-                onChange={e => {
-                  setTokenId(e.target.value);
-                }}
+              <Contract
+                name="NFTHolder"
+                signer={userProvider.getSigner()}
+                provider={localProvider}
+                address={address}
+                blockExplorer={blockExplorer}
               />
-            </div>
-            <Button
-              style={{ margin: 8 }}
-              loading={sending}
-              size="large"
-              shape="round"
-              type="primary"
-              onClick={async () => {
-                setDownloading(true);
-                let sellOrderResult
-                if (tokenId) {
-                const getSellOrdersByItemUrl = `${RARIBLE_BASE_URL}order/orders/sell/byItem?contract=${collectionContract}&tokenId=${tokenId}&sort=LAST_UPDATE`
-                sellOrderResult = await fetch(getSellOrdersByItemUrl);
-                } else {
-                const getSellOrderByCollectionUrl = `${RARIBLE_BASE_URL}order/orders/sell/byCollection?collection=${collectionContract}&sort=LAST_UPDATE`;
-                sellOrderResult = await fetch(getSellOrderByCollectionUrl);
-                }
-                const resultJson = await sellOrderResult.json();
-                if (resultJson && resultJson.orders) {
-                  setSellOrderContent(resultJson.orders);
-                }
-                setDownloading(false);
-              }}
-            >
-              Get Sell Orders
-            </Button>
+            </Route>
+          </Switch>
 
-            <pre style={{ padding: 16, width: 500, margin: "auto", paddingBottom: 150 }}>
-              {JSON.stringify(sellOrderContent)}
-            </pre>
-            <div style={{ width: 640, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-              <List
-                bordered
-                dataSource={sellOrderContent}
-                renderItem={item => {
-                  const id = item.hash;
-                  return (
-                    <List.Item key={id}>
-                      <Card
-                        title={
-                          <div>
-                            <span style={{ fontSize: 16, marginRight: 8 }}>{item.type}</span>
-                          </div>
-                        }
-                      >
-                        <div>
-                          <p>maker: {item.maker}</p>
-                          <p>selling:</p>
-                          <p>collection: {item.make.assetType.contract}</p>
-                          <p>tokenId: {item.make.assetType.tokenId}</p>
-                          <p>
-                            price: {formatEther(item.take.value)}
-                            {item.take.assetType.assetClass}
-                          </p>
-                          <p>createAt: {item.createdAt}</p>
-                        </div>
-                      </Card>
+          <ThemeSwitch />
 
-                      <Button
-                        onClick={async () =>{
-                          const preparedTransaction = await prepareMatchingOrder(item, address)
-                          console.log({preparedTransaction})
-                          const value = preparedTransaction.asset.value
-                          const valueBN = BigNumber.from(value)
-                          const safeValue = valueBN.add(100)
-                          console.log({safeValue})
-                          const signer = userProvider.getSigner()
-                          tx(signer.sendTransaction({to: preparedTransaction.transaction.to, from: address, data: preparedTransaction.transaction.data, value: safeValue}))
-
-                        }
-                        }
-                      >
-                        Fill order
-                      </Button>
-                    </List.Item>
-                  );
-                }}
-              />
-            </div>
-          </Route>
-
-          <Route path="/transfers">
-            <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-              <List
-                bordered
-                dataSource={transferEvents}
-                renderItem={item => {
-                  return (
-                    <List.Item key={item[0] + "_" + item[1] + "_" + item.blockNumber + "_" + item[2].toNumber()}>
-                      <span style={{ fontSize: 16, marginRight: 8 }}>#{item[2].toNumber()}</span>
-                      <Address address={item[0]} ensProvider={mainnetProvider} fontSize={16} /> =&gt;
-                      <Address address={item[1]} ensProvider={mainnetProvider} fontSize={16} />
-                    </List.Item>
-                  );
-                }}
-              />
-            </div>
-          </Route>
-
-          <Route path="/ipfsup">
-            <div style={{ paddingTop: 32, width: 740, margin: "auto", textAlign: "left" }}>
-              <ReactJson
-                style={{ padding: 8 }}
-                src={yourJSON}
-                theme="pop"
-                enableClipboard={false}
-                onEdit={(edit, a) => {
-                  setYourJSON(edit.updated_src);
-                }}
-                onAdd={(add, a) => {
-                  setYourJSON(add.updated_src);
-                }}
-                onDelete={(del, a) => {
-                  setYourJSON(del.updated_src);
-                }}
-              />
-            </div>
-
-            <Button
-              style={{ margin: 8 }}
-              loading={sending}
-              size="large"
-              shape="round"
-              type="primary"
-              onClick={async () => {
-                console.log("UPLOADING...", yourJSON);
-                setSending(true);
-                setIpfsHash();
-                const result = await ipfs.add(JSON.stringify(yourJSON)); // addToIPFS(JSON.stringify(yourJSON))
-                if (result && result.path) {
-                  setIpfsHash(result.path);
-                }
-                setSending(false);
-                console.log("RESULT:", result);
-              }}
-            >
-              Upload to IPFS
-            </Button>
-
-            <div style={{ padding: 16, paddingBottom: 150 }}>{ipfsHash}</div>
-          </Route>
-          <Route path="/ipfsdown">
-            <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
-              <Input
-                value={ipfsDownHash}
-                placeholder="IPFS hash (like QmadqNw8zkdrrwdtPFK1pLi8PPxmkQ4pDJXY8ozHtz6tZq)"
-                onChange={e => {
-                  setIpfsDownHash(e.target.value);
-                }}
-              />
-            </div>
-            <Button
-              style={{ margin: 8 }}
-              loading={downloading}
-              size="large"
-              shape="round"
-              type="primary"
-              onClick={async () => {
-                console.log("DOWNLOADING...", ipfsDownHash);
-                setDownloading(true);
-                setIpfsContent();
-                const result = await getFromIPFS(ipfsDownHash); // addToIPFS(JSON.stringify(yourJSON))
-                if (result && result.toString) {
-                  setIpfsContent(result.toString());
-                }
-                setDownloading(false);
-              }}
-            >
-              Download from IPFS
-            </Button>
-
-            <pre style={{ padding: 16, width: 500, margin: "auto", paddingBottom: 150 }}>{ipfsContent}</pre>
-          </Route>
-          <Route path="/debugcontracts">
-            <Contract
-              name="YourCollectible"
-              signer={userProvider.getSigner()}
-              provider={localProvider}
+          {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
+          <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
+            <Account
               address={address}
+              localProvider={localProvider}
+              userProvider={userProvider}
+              mainnetProvider={mainnetProvider}
+              price={price}
+              web3Modal={web3Modal}
+              loadWeb3Modal={loadWeb3Modal}
+              logoutOfWeb3Modal={logoutOfWeb3Modal}
               blockExplorer={blockExplorer}
             />
-            <Contract
-              name="YourERC20"
-              signer={userProvider.getSigner()}
-              provider={localProvider}
-              address={address}
-              blockExplorer={blockExplorer}
-            />
-            <Contract
-              name="NFTHolder"
-              signer={userProvider.getSigner()}
-              provider={localProvider}
-              address={address}
-              blockExplorer={blockExplorer}
-            />
-          </Route>
-        </Switch>
+            {faucetHint}
+          </div>
+        </div>
       </BrowserRouter>
-
-      <ThemeSwitch />
-
-      {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
-      <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
-        <Account
-          address={address}
-          localProvider={localProvider}
-          userProvider={userProvider}
-          mainnetProvider={mainnetProvider}
-          price={price}
-          web3Modal={web3Modal}
-          loadWeb3Modal={loadWeb3Modal}
-          logoutOfWeb3Modal={logoutOfWeb3Modal}
-          blockExplorer={blockExplorer}
-        />
-        {faucetHint}
-      </div>
-
-      {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
-      <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
-        <Row align="middle" gutter={[4, 4]}>
-          <Col span={8}>
-            <Ramp price={price} address={address} networks={NETWORKS} />
-          </Col>
-
-          <Col span={8} style={{ textAlign: "center", opacity: 0.8 }}>
-            <GasGauge gasPrice={gasPrice} />
-          </Col>
-          <Col span={8} style={{ textAlign: "center", opacity: 1 }}>
-            <Button
-              onClick={() => {
-                window.open("https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA");
-              }}
-              size="large"
-              shape="round"
-            >
-              <span style={{ marginRight: 8 }} role="img" aria-label="support">
-                💬
-              </span>
-              Support
-            </Button>
-          </Col>
-        </Row>
-
-        <Row align="middle" gutter={[4, 4]}>
-          <Col span={24}>
-            {
-              /*  if the local provider has a signer, let's show the faucet:  */
-              faucetAvailable ? (
-                <Faucet localProvider={localProvider} price={price} ensProvider={mainnetProvider} />
-              ) : (
-                ""
-              )
-            }
-          </Col>
-        </Row>
-      </div>
     </div>
   );
 }

@@ -13,7 +13,7 @@ const main = async () => {
 
   // ADDRESS TO MINT TO:
   // const toAddress = "0x744222844bFeCC77156297a6427B5876A6769e19"
-  const toAddress = "0x3f950fe41db88c52a5c92456567e0770efc343d9"
+  const toAddress = "0x62FaFb31cfB1e57612bE488035B3783048cFe813"
 
   console.log("\n\n 🎫 Minting to "+toAddress+"...\n");
 
