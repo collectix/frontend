@@ -24,8 +24,7 @@ export default class ListCollectibles extends React.Component {
     let categories = axios
       .get("http://localhost:4100/v1/users/getUsers")
       .then( (response) => {
-        console.log('ЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫ', response);
-        this.setState({ users: response.data.results });
+        this.setState({ users: response.data });
       })
       .catch(function (error) {
         // handle error
@@ -48,10 +47,10 @@ export default class ListCollectibles extends React.Component {
                 <li className="collectors__item">
                   <div className="collectors__item--wrapper">
                     <div className="collectors__item-header">
-                      <img src={collector1} alt="" />
+                      <img width="150px" height="150px" src={item.user_avatar} alt="Avatar" />
                       <div className="collectors__name-block">
                         <a className="collectors__name">{item.name}</a>
-                        <button className="collectors__button main-button">Tasks: 5</button>
+                        <button className="collectors__button main-button">Tasks: {item.tasks.length}</button>
                       </div>
                     </div>
                     <ul className="collectors__params clear-list">

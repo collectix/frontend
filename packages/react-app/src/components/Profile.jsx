@@ -298,7 +298,7 @@ export default class Profile extends React.Component {
             <div className="simple-collections"> </div>
             <div className="profile-offers">
               <h2 className="main-title">
-                On sale <span className="counter">(4)</span>
+                On sale <span className="counter">{this.state.NFTsOnSale.length}</span>
               </h2>
               <List
                 grid={{ gutter: 16, column: 3 }}
@@ -311,16 +311,16 @@ export default class Profile extends React.Component {
                     <List.Item key={id + "_" + item.uri + "_" + item.owner}>
                       <li className="collection__item">
                         <div>
-                          <img className="collection__item-image" src={url} />
+                          <img width="200px" height="200px" className="collection__item-image" src={url} />
                           <a className="collection__name" href="">
                             {item.name}
                           </a>
                           <div className="collection__author">
-                            <span className="collection__author-name">Ally Smith</span>
+                            <span className="collection__author-name">{item.owner}</span>
                             <span className="collection__author-raiting">(Rating: 12)</span>
                           </div>
-                          <div className="collection__item-description">{item.description}</div>
-                          <div className="collection__creator">Creator 30% royalties</div>
+                          <div className="collection__item-description">{item.taskName}</div>
+                          <div className="collection__creator">Creator {item.royalties} royalties</div>
                           <button className="main-button collection__item-buy">Buy</button>
                         </div>
                       </li>

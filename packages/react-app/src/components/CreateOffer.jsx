@@ -72,12 +72,18 @@ export default class CreateOffer extends React.Component {
     this.setState({ description: event.target.value });
   };
 
+  handleChangeTaskName = event => {
+    console.log(event.target.value);
+    this.setState({ taskName: event.target.value });
+  };
+
   handleSubmit = event => {
     var bodyFormData = new FormData();
     bodyFormData.append("creator", this.props.address);
     bodyFormData.append("name", this.state.name);
     bodyFormData.append("royalty", this.state.royalty);
     bodyFormData.append("description", this.state.description);
+    bodyFormData.append("taskName", this.state.taskName);
     bodyFormData.append("file", this.state.images[0]);
     /*
     axios({
@@ -140,7 +146,7 @@ export default class CreateOffer extends React.Component {
                 axios({
                   method: "post",
                   url: "http://localhost:4100/v1/users/addNFT",
-                  data: form,
+                  data: {form: form, taskName: this.state.taskName},
                 }).then(res => {
                   console.log(res);
                 });
@@ -211,6 +217,17 @@ export default class CreateOffer extends React.Component {
                 fullWidth
                 value={this.state.royalty}
                 onChange={this.handleChangeRoyalty}
+              />
+            </label>
+            <label>
+              <TextField
+                style={{ display: "block", marginTop: "15px" }}
+                label="Task Name"
+                type="text"
+                variant="standard"
+                fullWidth
+                value={this.state.taskName}
+                onChange={this.handleChangeTaskName}
               />
             </label>
             <input

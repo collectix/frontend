@@ -72,9 +72,18 @@ export default class TaskFeed extends React.Component {
   }
 
   componentDidMount() {
+    let i = 0;
     axios
       .get("http://localhost:4100/v1/tasks/")
-      .then((response) => {
+      .then(response => {
+        response.data.results.forEach(res => {
+          const profile2 = axios.get("http://localhost:4100/v1/users/" + res.author).then(result => {
+            console.log("AAAAAAAAAAAAAAA", result);
+            response.data.results[i].author = result.data.name;
+            i +=1 ;
+          });
+        });
+        response.data.results = response.data.results.reverse();
         this.setState({ tasks: response.data.results });
       })
       .catch(function (error) {
@@ -97,7 +106,7 @@ export default class TaskFeed extends React.Component {
                 key={id + "_" + item.uri + "_" + item.owner}
                 style={{ width: "80vw", textAlign: "center", margin: "auto", justifyContent: "center" }}
               >
-                <li style={{ textAlign: "center" }}>
+                <li style={{ textAlign: "center", width:"60%" }}>
                   <div className="tasks__item--wrapper">
                     <div className="collectors__item-header">
                       <div>
@@ -147,8 +156,10 @@ export default class TaskFeed extends React.Component {
                         <span className="collectors__name-param">Reward </span>
                         <span className="collectors__value-param">{item.reward}</span>
                       </li>
-                    </ul>
-                    <button className="collectors__button main-button">Tasks: 5</button>
+                    </ul> 
+                    <Link to="/create-offer">
+                      <button className="collectors__button main-button">Make Offer</button>
+                    </Link>
                   </div>
                 </li>
               </List.Item>
