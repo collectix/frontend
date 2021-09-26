@@ -66,5 +66,8 @@
       "**/hardhat-ts/**"
     ]
   },
+  "engines": {
+    "node": "16.8.0"
+  },
   "dependencies": {}
 }
