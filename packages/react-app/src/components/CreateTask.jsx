@@ -103,12 +103,14 @@ export default class CreateProfile extends React.Component {
       this.state.description,
     );
     bodyFormData.append("name", this.state.name);
-    bodyFormData.append("collection", this.state.collection);
+    bodyFormData.append("collection", "main");
     bodyFormData.append("categories", this.state.categories);
     bodyFormData.append("hashtag", this.state.hashtag);
     bodyFormData.append("deadline", this.state.deadline);
     bodyFormData.append("reward", this.state.reward);
     bodyFormData.append("description", this.state.description);
+    bodyFormData.append("author", this.props.address);
+    /*
     axios({
       method: "post",
       url: "http://collectix.store:3334/api/task-add",
@@ -123,6 +125,22 @@ export default class CreateProfile extends React.Component {
         //handle error
         console.log(response);
       });
+     */
+    axios({
+      method: "post",
+      url: "http://localhost:4100/v1/tasks/",
+      data: bodyFormData,
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+      .then(function (response) {
+        //handle success
+        console.log(response);
+      })
+      .catch(function (response) {
+        //handle error
+        console.log(response);
+      });
+
     console.log(bodyFormData);
     event.preventDefault();
   };
@@ -141,89 +159,87 @@ export default class CreateProfile extends React.Component {
         style={{ width: "80vw", margin: "10px", marginTop: 32, paddingBottom: 32, textAlign: "left" }}
       >
         <Grid item xs={6}>
-
-        <Typography variant="h4">Create Task</Typography>
-        <Typography variant="body1" style={{ marginTop: "10px" }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tincidunt turpis aliquet felis rhoncus, sed
-          mattis ex porttitor. Donec gravida bibendum sapien, sit amet vulputate justo mollis a. Phasellus posuere
-          rutrum est vitae maximus. Donec lobortis nisl et viverra imperdiet.{" "}
-        </Typography>
-        <form onSubmit={this.handleSubmit} style={{ marginTop: "10px" }}>
-          <label>
-            <TextField
-              style={{ display: "block", marginTop: "15px" }}
-              label="Name"
-              type="text"
-              value={this.state.name}
-              onChange={this.handleChangeName}
-            />
-          </label>
-          <label>
-            <TextField
-              style={{ display: "block", marginTop: "15px" }}
-              label="Collection"
-              select
-              value={this.state.collection}
-              onChange={this.handleChangeCollection}
-            >
-              {this.state.collections.map(option => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </label>
-          <label>
-            <TextField
-              style={{ display: "block", marginTop: "15px" }}
-              label="Categories"
-              type="text"
-              value={this.state.categories}
-              onChange={this.handleChangeCategories}
-            />
-          </label>
-          <label>
-            <TextField
-              style={{ display: "block", marginTop: "15px" }}
-              label="Hashtag"
-              type="text"
-              value={this.state.hashtag}
-              onChange={this.handleChangeHashtag}
-            />
-          </label>
-          <label>
-            <TextField
-              style={{ display: "block", marginTop: "15px" }}
-              label="Deadline"
-              type="text"
-              value={this.state.deadline}
-              onChange={this.handleChangeDeadline}
-            />
-          </label>
-          <label>
-            <TextField
-              style={{ display: "block", marginTop: "15px" }}
-              label="Reward"
-              type="text"
-              value={this.state.reaward}
-              onChange={this.handleChangeReward}
-            />
-          </label>
-          <label>
-            <TextField
-              style={{ display: "block", marginTop: "15px" }}
-              label="Description"
-              type="text"
-              value={this.state.description}
-              onChange={this.handleChangeDescription}
-            />
-          </label>
-          <input style={{ display: "block", marginTop: "15px" }} type="submit" value="Отправить" />
-        </form>
+          <Typography variant="h4">Create Task</Typography>
+          <Typography variant="body1" style={{ marginTop: "10px" }}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tincidunt turpis aliquet felis rhoncus, sed
+            mattis ex porttitor. Donec gravida bibendum sapien, sit amet vulputate justo mollis a. Phasellus posuere
+            rutrum est vitae maximus. Donec lobortis nisl et viverra imperdiet.{" "}
+          </Typography>
+          <form onSubmit={this.handleSubmit} style={{ marginTop: "10px" }}>
+            <label>
+              <TextField
+                style={{ display: "block", marginTop: "15px" }}
+                label="Name"
+                type="text"
+                value={this.state.name}
+                onChange={this.handleChangeName}
+              />
+            </label>
+            <label>
+              <TextField
+                style={{ display: "block", marginTop: "15px" }}
+                label="Collection"
+                select
+                value={this.state.collection}
+                onChange={this.handleChangeCollection}
+              >
+                {this.state.collections.map(option => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </label>
+            <label>
+              <TextField
+                style={{ display: "block", marginTop: "15px" }}
+                label="Categories"
+                type="text"
+                value={this.state.categories}
+                onChange={this.handleChangeCategories}
+              />
+            </label>
+            <label>
+              <TextField
+                style={{ display: "block", marginTop: "15px" }}
+                label="Hashtag"
+                type="text"
+                value={this.state.hashtag}
+                onChange={this.handleChangeHashtag}
+              />
+            </label>
+            <label>
+              <TextField
+                style={{ display: "block", marginTop: "15px" }}
+                label="Deadline"
+                type="text"
+                value={this.state.deadline}
+                onChange={this.handleChangeDeadline}
+              />
+            </label>
+            <label>
+              <TextField
+                style={{ display: "block", marginTop: "15px" }}
+                label="Reward"
+                type="text"
+                value={this.state.reaward}
+                onChange={this.handleChangeReward}
+              />
+            </label>
+            <label>
+              <TextField
+                style={{ display: "block", marginTop: "15px" }}
+                label="Description"
+                type="text"
+                value={this.state.description}
+                onChange={this.handleChangeDescription}
+              />
+            </label>
+            <input style={{ display: "block", marginTop: "15px" }} type="submit" value="Отправить" />
+          </form>
         </Grid>
-        <Grid item xs={6}>
-        </Grid>
-        </Grid>
+        <Grid item xs={6}></Grid>
+      </Grid>
     );
   }
 }

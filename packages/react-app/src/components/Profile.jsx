@@ -13,13 +13,13 @@ import Discord from "../img/Discord.svg";
 import Reddit from "../img/Reddit.svg";
 import Reddit1 from "../img/Reddit (1).svg";
 import collectionItem from "../img/collection-item.png";
-import collector1 from "../img/collector1.png";
 
 export default class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       value: "",
+      reolad: 1,
       maxNumbers: 69,
       profile: {
         id: "1",
@@ -43,6 +43,7 @@ export default class Profile extends React.Component {
           author: "Ally Smith",
           royalties: "30%",
           price: "5 Eth",
+          image: "1234324234jsfjsfdhsfdhsfhsfh",
         },
         {
           id: "2",
@@ -54,6 +55,7 @@ export default class Profile extends React.Component {
           author: "Ally Smith",
           royalties: "30%",
           price: "5 Eth",
+          image: "1234324234jsfjsfdhsfdhsfhsfh",
         },
         {
           id: "3",
@@ -65,6 +67,7 @@ export default class Profile extends React.Component {
           author: "Ally Smith",
           royalties: "30%",
           price: "5 Eth",
+          image: "1234324234jsfjsfdhsfdhsfhsfh",
         },
         {
           id: "4",
@@ -76,6 +79,7 @@ export default class Profile extends React.Component {
           author: "Ally Smith",
           royalties: "30%",
           price: "5 Eth",
+          image: "1234324234jsfjsfdhsfdhsfhsfh",
         },
       ],
     };
@@ -87,17 +91,7 @@ export default class Profile extends React.Component {
     this.handleChangeName = this.handleChangeName.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-
-  componentDidMount() {
-    const profile = axios
-      .get("http://collectix.store:3334/api/categories")
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      });
+  /*
     const tasks = axios
       .get("http://collectix.store:3334/api/categories")
       .then(function (response) {
@@ -125,7 +119,7 @@ export default class Profile extends React.Component {
         // handle error
         console.log(error);
       });
-  }
+     */
 
   handleChangeMail = event => {
     console.log(event.target.value);
@@ -185,6 +179,38 @@ export default class Profile extends React.Component {
   };
 
   render() {
+    if (this.props.address !== "" && this.state.reolad == 1) {
+      /*
+    const profile = axios
+      .get("http://collectix.store:3334/api/profile/" + this.props.address)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+     */
+      const profile2 = axios
+        .get("http://localhost:4100/v1/users/" + this.props.address)
+        .then(response => {
+          //this.setState({ profile: response.data });
+          let NFTsOnSale = [];
+          response.data.NFT.forEach(NFT => {
+            const jsonManifestBuffer = this.props.getFromIPFS(NFT.uri.slice(6, 100)).then(jsonManifestBuffer => {
+              const jsonManifest = JSON.parse(jsonManifestBuffer.toString());
+              NFTsOnSale.push({ id: NFT.tokenId, uri: NFT.uri, owner: NFT.creators[0].account, ...jsonManifest });
+            });
+          });
+          this.setState({ profile: response.data });
+          this.setState({ NFTsOnSale: NFTsOnSale });
+          this.setState({ reolad: 0 });
+        })
+        .catch(function (error) {
+          // handle error
+          console.log(error);
+        });
+    }
     return (
       <Grid
         container
@@ -196,7 +222,7 @@ export default class Profile extends React.Component {
           <div className="profile">
             <div className="profile__main">
               <div className="profile__image">
-                <img src={profile} alt="" />
+                <img width="150px" height="150px" src={this.state.profile.user_avatar} alt="" />
               </div>
               <div className="profile__info">
                 <div className="profile_info-title-block">
@@ -280,28 +306,20 @@ export default class Profile extends React.Component {
                 className="collection__list clear-list"
                 renderItem={item => {
                   const id = item.id;
+                  let url = "https://gateway.pinata.cloud/" + item.image.slice(7, 100);
                   return (
                     <List.Item key={id + "_" + item.uri + "_" + item.owner}>
                       <li className="collection__item">
-                        <div className="collection__item-wrapper">
-                          <a
-                            className="collection__item-image"
-                            href=""
-                            style={{ backgroundImage: `url(${collectionItem})` }}
-                          >
-                            {" "}
-                          </a>
+                        <div>
+                          <img className="collection__item-image" src={url} />
                           <a className="collection__name" href="">
-                            Name of NFT
+                            {item.name}
                           </a>
                           <div className="collection__author">
                             <span className="collection__author-name">Ally Smith</span>
                             <span className="collection__author-raiting">(Rating: 12)</span>
                           </div>
-                          <div className="collection__item-description">
-                            Description of NFT that very intersting for many collectors. Author is very popular, as we
-                            know.
-                          </div>
+                          <div className="collection__item-description">{item.description}</div>
                           <div className="collection__creator">Creator 30% royalties</div>
                           <button className="main-button collection__item-buy">Buy</button>
                         </div>

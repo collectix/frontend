@@ -78,6 +78,22 @@ export default class CreateProfile extends React.Component {
         //handle error
         console.log(response);
       });
+
+    bodyFormData.append("file", this.state.images[0].file);
+    axios({
+      method: "post",
+      url: "http://localhost:4100/v1/users/users",
+      data: bodyFormData,
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+      .then(function (response) {
+        //handle success
+        console.log(response);
+      })
+      .catch(function (response) {
+        //handle error
+        console.log(response);
+      });
     console.log(bodyFormData);
     event.preventDefault();
   };

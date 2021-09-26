@@ -79,6 +79,7 @@ export default class CreateOffer extends React.Component {
     bodyFormData.append("royalty", this.state.royalty);
     bodyFormData.append("description", this.state.description);
     bodyFormData.append("file", this.state.images[0]);
+    /*
     axios({
       method: "post",
       url: "http://collectix.store:3334/api/lazy-mint",
@@ -93,6 +94,7 @@ export default class CreateOffer extends React.Component {
         //handle error
         console.log(response);
       });
+     */
 
     var bodyFormData1 = new FormData();
     bodyFormData1.append("file", this.state.images[0].file);
@@ -111,9 +113,8 @@ export default class CreateOffer extends React.Component {
           "VmNTRkM2ZkMzI2NGQzIiwiaWF0IjoxNjMyNjExMjMxfQ.MFeF4KqNAZcQVyeENpQJePU-5dV4d7C1Uz5wG0OONWg",
       },
     })
-      .then((response) => {
+      .then(response => {
         //handle success
-        console.log("IPFS", response.data.IpfsHash);
         let metadata = {
           name: this.state.name,
           description: this.state.description,
@@ -121,21 +122,32 @@ export default class CreateOffer extends React.Component {
           external_url: "",
           animation_url: "",
         };
-        const newTokenId = generateTokenId(
-          this.props.writeContracts.ERC721Rarible.address,
-          this.props.accountAddress,
-        ).then(newTokenId => {
-          const form = createLazyMint(
-            newTokenId,
-            this.props.provider,
+        const result = this.props.ipfs.add(JSON.stringify(metadata)).then(res => {
+          console.log("BBFBFBBF", res.path);
+          const newTokenId = generateTokenId(
             this.props.writeContracts.ERC721Rarible.address,
             this.props.accountAddress,
-            response.data.IpfsHash,
-            "ERC721",
-          ).then(form => {
-            putLazyMint(form);
+          ).then(newTokenId => {
+            const form = createLazyMint(
+              newTokenId,
+              this.props.provider,
+              this.props.writeContracts.ERC721Rarible.address,
+              this.props.accountAddress,
+              res.path,
+              "ERC721",
+            ).then(form => {
+              putLazyMint(form).then(response => {
+                axios({
+                  method: "post",
+                  url: "http://localhost:4100/v1/users/addNFT",
+                  data: form,
+                }).then(res => {
+                  console.log(res);
+                });
+              });
+            });
           });
-        });
+        }); // addToIPFS(JSON.stringify(yourJSON))
       })
       .catch(function (response) {
         //handle error

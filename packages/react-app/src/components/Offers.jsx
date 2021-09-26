@@ -88,9 +88,7 @@ export default class Offers extends React.Component {
               <List.Item key={id + "_" + item.uri + "_" + item.owner}>
                 <li className="collection__item" style={{width:"80%"}}>
                   <div className="collection__item-wrapper">
-                    <a className="collection__item-image" href="" style={{ backgroundImage: `url(${collectionItem})` }}>
-                      {" "}
-                    </a>
+                    <img className="collection__item-image" src={collectionItem}/>
                     <a className="collection__name" href="">
                       Name of NFT
                     </a>

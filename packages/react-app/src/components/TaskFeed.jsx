@@ -73,9 +73,9 @@ export default class TaskFeed extends React.Component {
 
   componentDidMount() {
     axios
-      .get("http://collectix.store:3334/api/tasks")
-      .then(function (response) {
-        this.setState({ tasks: response });
+      .get("http://localhost:4100/v1/tasks/")
+      .then((response) => {
+        this.setState({ tasks: response.data.results });
       })
       .catch(function (error) {
         // handle error
@@ -86,9 +86,7 @@ export default class TaskFeed extends React.Component {
   render() {
     return (
       <div className="profile-offers">
-        <h2 className="main-title">
-          Tasks
-        </h2>
+        <h2 className="main-title">Tasks</h2>
         <List
           dataSource={this.state.tasks}
           style={{ justifyContent: "center", width: "80vw" }}
@@ -102,8 +100,10 @@ export default class TaskFeed extends React.Component {
                 <li style={{ textAlign: "center" }}>
                   <div className="tasks__item--wrapper">
                     <div className="collectors__item-header">
-                      <div className="collectors__name-block">
-                        <a className="collectors__name">{item.title}</a>
+                      <div>
+                        <Typography variant="h6" style={{ fontWeight: "bold" }} className="collectors__name">
+                          {item.title}
+                        </Typography>
                       </div>
                     </div>
                     <ul className="collectors__params clear-list">
@@ -111,18 +111,20 @@ export default class TaskFeed extends React.Component {
                         <span className="collectors__name-param">Categories </span>
                         <span className="collectors__value-param">{item.categories}</span>
                       </li>
+                    </ul>
+                    <Typography variant="body1" className="collectors__text">
+                      {item.body}
+                    </Typography>
+                    <ul className="collectors__params clear-list" style={{ justifyContent: "space-between" }}>
                       <li className="collectors__params-item">
                         <span className="collectors__name-param">Hashtags </span>
                         <span className="collectors__value-param">{item.hashtags}</span>
                       </li>
                     </ul>
-                    <p className="collectors__text">
-                      {item.body}
-                    </p>
-                    <h3 className="collectors__text">
-                      {item.author}
-                    </h3>
-                    <ul className="collectors__params clear-list">
+                    <ul className="collectors__params clear-list" style={{ justifyContent: "space-between" }}>
+                      <li className="collectors__params-item">
+                        <span className="collectors__value-param">{item.author}</span>
+                      </li>
                       <li className="collectors__params-item">
                         <span className="collectors__name-param">Collection </span>
                         <span className="collectors__value-param">{item.collection}</span>
@@ -135,12 +137,12 @@ export default class TaskFeed extends React.Component {
                         <span className="collectors__name-param">Deadline </span>
                         <span className="collectors__value-param">{item.deadline}</span>
                       </li>
-                    </ul>
-                    <ul className="collectors__params clear-list">
                       <li className="collectors__params-item">
                         <span className="collectors__name-param">Proposed </span>
                         <span className="collectors__value-param">{item.proposed}</span>
                       </li>
+                    </ul>
+                    <ul className="collectors__params clear-list" style={{ justifyContent: "center" }}>
                       <li className="collectors__params-item">
                         <span className="collectors__name-param">Reward </span>
                         <span className="collectors__value-param">{item.reward}</span>

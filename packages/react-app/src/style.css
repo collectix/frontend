@@ -406,7 +406,6 @@ collection
 .collection__item-image {
 	display: block;
 	width: 100%;
-	padding-top: 100%;
 	background-repeat: no-repeat;
 	background-size: contain;
 }

@@ -421,7 +421,7 @@ function App(props) {
   const drawerWidth = 240;
 
   const auth = axios
-    .get("http://collectix.store:3334/api/auth/" + address)
+    .get("http://localhost:4100/v1/users/" + address)
     .then(function (response) {
       setAuth(true);
     })
@@ -559,14 +559,14 @@ function App(props) {
                 <ListItemText primary="Create Offer" />
               </Link>
             </ListItem>
-            <ListItem button key="Create Offer">
+            <ListItem button key="PT">
               <Link
                 class="left-menu__link left-menu__link--active"
                 style={{ width: "100%" }}
                 onClick={() => {
-                  setRoute("/profile");
+                  setRoute("/create-profile");
                 }}
-                to="/profile"
+                to="/create-profile"
               >
                 <ListItemIcon>
                   <LocalOfferIcon />
@@ -592,10 +592,10 @@ function App(props) {
               <CreateProfile address={address} />
             </Route>
             <Route exact path="/profile">
-              <Profile />
+              <Profile address={address} getFromIPFS={getFromIPFS} />
             </Route>
             <Route exact path="/create-task">
-              <CreateTask />
+              <CreateTask address={address} />
             </Route>
             <Route exact path="/create-collection">
               <CreateCollection />
@@ -604,8 +604,13 @@ function App(props) {
               <TaskFeed yourCollectibles={yourCollectibles} />
             </Route>
             <Route exact path="/create-offer">
-              <CreateOffer accountAddress={address} writeContracts={writeContracts} ensProvider={mainnetProvider}
-                           provider={userProvider}/>
+              <CreateOffer
+                accountAddress={address}
+                writeContracts={writeContracts}
+                ensProvider={mainnetProvider}
+                provider={userProvider}
+                ipfs={ipfs}
+              />
             </Route>
             <Route exact path="/offers">
               <Offers />
@@ -868,7 +873,7 @@ function App(props) {
               right: 20,
               top: 0,
               padding: 10,
-              zIndex: 1202
+              zIndex: 1202,
             }}
           >
             <Account
