@@ -1,5 +1,5 @@
 {
-  "name": "@scaffold-eth/monorepo",
+  "name": "Collectix",
   "version": "1.0.0",
   "keywords": [
     "ethereum",
@@ -65,9 +65,6 @@
       "**/hardhat-ts",
       "**/hardhat-ts/**"
     ]
-  },
-  "engines": {
-    "node": "16.8.0"
   },
   "dependencies": {}
 }
